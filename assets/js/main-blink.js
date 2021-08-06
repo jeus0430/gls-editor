@@ -593,6 +593,7 @@ function drawZone(zone) {
   }
 
   var features = new ol.format.GeoJSON().readFeatures(geojsonObject);
+
   // New vector layer
   var vector = new ol.layer.Vector({
     source: new ol.source.Vector({
@@ -604,7 +605,7 @@ function drawZone(zone) {
         new ol.style.Style({
           image: new ol.style.RegularShape({
             fill: new ol.style.Fill({
-              color: zone.properties.color
+              color: hexToRGB(zone.properties.color, 0.1)
             }),
             stroke: new ol.style.Stroke({
               color: "#109eff",
@@ -615,10 +616,10 @@ function drawZone(zone) {
             angle: feature.get("angle") || 0,
           }),
           fill: new ol.style.Fill({
-            color: zone.properties.color
+            color: hexToRGB(zone.properties.color, 0.1)
           }),
           stroke: new ol.style.Stroke({
-            color: zone.properties.color,
+            color: hexToRGB(zone.properties.color),
             width: 3
           }),
           text: new ol.style.Text({
@@ -1854,7 +1855,11 @@ function getBlinkCoords(startpt, endpt, ratio)
     var  len2= turf.length(turf.toWgs84(sliced2));
     return turf.toMercator(turf.along(turf.toWgs84(line), len1 + (len2-len1)*ratio));
 }
-function hexToRGB(hex, alpha) {
+function hexToRGB(hex, alpha = 1) {
+  if (hex.indexOf("#") > -1) {
+    hex = hex.slice(1)
+  }
+
   var r = parseInt(hex.slice(0, 2), 16),
       g = parseInt(hex.slice(2, 4), 16),
       b = parseInt(hex.slice(4, 6), 16);
