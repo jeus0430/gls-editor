@@ -1423,15 +1423,15 @@ function createAlertDot(color) {
       width: 16px;
       height: 16px;
       color: red;
-      background-color: #${color};
+      background-color: ${hexToRGB(color)};
       border-radius: 50%;
     `
   }
 
   $.keyframe.define([{
     name: className,
-    from: {'box-shadow': `0 0 0 0px #${color}bb`},
-    to: {'box-shadow': `0 0 0 18px #${color}00`},
+    from: {'box-shadow': `0 0 0 0px ${hexToRGB(color, 0.8)}`},
+    to: {'box-shadow': `0 0 0 18px ${hexToRGB(color, 0.1)}`},
   }])
 
   document.getElementById("alert").appendChild(node);
@@ -1854,6 +1854,18 @@ function getBlinkCoords(startpt, endpt, ratio)
     var  len2= turf.length(turf.toWgs84(sliced2));
     return turf.toMercator(turf.along(turf.toWgs84(line), len1 + (len2-len1)*ratio));
 }
+function hexToRGB(hex, alpha) {
+  var r = parseInt(hex.slice(0, 2), 16),
+      g = parseInt(hex.slice(2, 4), 16),
+      b = parseInt(hex.slice(4, 6), 16);
+
+  if (alpha) {
+      return "rgba(" + r + ", " + g + ", " + b + ", " + alpha + ")";
+  } else {
+      return "rgb(" + r + ", " + g + ", " + b + ")";
+    }
+}
+
 zoneGeoJson = JSON.parse($('#txtgeojson').val())
 setTimeout(() => {
   removeDivs();
