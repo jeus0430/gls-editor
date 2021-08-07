@@ -178,7 +178,7 @@ function alertControl(start) {
   let blink_color = undefined;
 
   if (document.getElementById("txtblink").value) {
-    cableItemList = document.getElementById("txtblink").value.split("|");
+    cableItemList = document.getElementById("txtblink").value.split("$");
   } else {
     return;
   }
@@ -259,8 +259,7 @@ function alertControl(start) {
       }
       if (selected_index > -1 && selected_index < cableInfo.length) {
         cableInfo[selected_index + 1] &&
-          (
-            pulseCoords = getBlinkCoords(
+          (pulseCoords = getBlinkCoords(
             sel_cable,
             cableInfo[selected_index],
             cableInfo[selected_index + 1],
@@ -311,9 +310,16 @@ $(document).on("click", "#alertStop", null, function () {
 $(document).on("click", "#btn_add_cable", null, function () {
   // Data to draw on the map
   var $cableElem = $("#cable_list");
-  var sectionLength = $cableElem.val() * 1;
 
-  var cableId = "Cable-" + $cableElem.val().split("#")[0];
+  var cableId = $cableElem.val().split("/")[0];
+  var cableLength = $cableElem.val().split("/")[1];
+  const offset = cableLength.split("-")[0] * 1;
+  const endpoint = cableLength.split("-")[1] * 1;
+
+  if (cableId === "Cable-0") {
+    alert("Please select cable type!");
+    return;
+  }
 
   if (Object.values(selectedFeature).length === 0) {
     alert("Select a valid line first.");
@@ -328,12 +334,12 @@ $(document).on("click", "#btn_add_cable", null, function () {
   var coordinates = selectedFeature.getGeometry().getCoordinates();
   var calibration = [
     {
-      offset: 0,
+      offset,
       coordinates: coordinates[0],
     },
   ];
   calibration.push({
-    offset: sectionLength,
+    offset: endpoint,
     coordinates: coordinates[coordinates.length - 1],
   });
 
@@ -1859,7 +1865,7 @@ function modifyCalibrations(zoneGeoJson) {
   for (; i < featureList.length; i++) {
     let feature = featureList[i];
     let featureLevel = feature.type;
-    if (feature.properties.id.indexOf("Cable") != -1) {
+    if (feature.properties.id && feature.properties.id.indexOf("Cable") != -1) {
       var coordinates = zoneGeoJson.features[i].geometry.coordinates;
       const lines = new ol.geom.LineString(coordinates);
       let closest;
@@ -1878,13 +1884,12 @@ function modifyCalibrations(zoneGeoJson) {
   }
 }
 
-function getBlinkCoords(sel_cable,startpt, endpt, ratio) {
+function getBlinkCoords(sel_cable, startpt, endpt, ratio) {
   let featureList = zoneGeoJson.features;
   let i = 0;
   for (; i < featureList.length; i++) {
     let feature = featureList[i];
-    if (feature.properties.id == sel_cable)
-      break;
+    if (feature.properties.id == sel_cable) break;
   }
   if (i == featureList.length) return;
   var coordinates = zoneGeoJson.features[i].geometry.coordinates;
@@ -1903,7 +1908,10 @@ function getBlinkCoords(sel_cable,startpt, endpt, ratio) {
   var end = turf.point(endpt);
   var sliced1 = turf.lineSplit(line, start)["features"][0];
   var len1 = turf.length(turf.toWgs84(sliced1));
-  if (start['geometry']['coordinates'][0] == lines.getFirstCoordinate()[0] && start['geometry']['coordinates'][1] == lines.getFirstCoordinate()[1]) {
+  if (
+    start["geometry"]["coordinates"][0] == lines.getFirstCoordinate()[0] &&
+    start["geometry"]["coordinates"][1] == lines.getFirstCoordinate()[1]
+  ) {
     len1 = 0;
   }
 
