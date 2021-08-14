@@ -38,11 +38,11 @@
         value="Zone-11/Cable-34/81"
       />
       <textarea id="txtgeojson" name="txtgeojson" hidden>
-        {"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":"Zone-11","text":"subzone-2","color":"#000000"},"geometry":{"type":"Polygon","coordinates":[[[190.3753856650007,220.87390174603183],[1498.7637621404278,220.87390174603183],[1498.7637621404278,475.878557998984],[190.3753856650007,475.878557998984],[190.3753856650007,220.87390174603183]]]}},{"type":"Feature","properties":{"id":"Cable-27","text":"Device 1-Cable 1-Section 1-Zone","calibration":[{"offset":0,"coordinates":[230.8901441350959,514.0100953826029]},{"offset":59,"coordinates":[1477.314772362142,504.47721103669824]}]},"geometry":{"type":"LineString","coordinates":[[230.8901441350959,514.0100953826029],[1477.314772362142,504.47721103669824]]}},{"type":"Feature","properties":{"id":"Cable-33","text":"Device 1-Cable 1-Section 2-Zone","calibration":[{"offset":60,"coordinates":[1482.0812145350944,466.3456736530792]},{"offset":76,"coordinates":[1472.5483301891898,230.40678609193662]}]},"geometry":{"type":"LineString","coordinates":[[1482.0812145350944,466.3456736530792],[1472.5483301891898,230.40678609193662]]}},{"type":"Feature","properties":{"id":"Cable-34","text":"Device 1-Cable 1-Section 3-Zone","calibration":[{"offset":77,"coordinates":[1429.6503506326183,220.87390174603217]},{"offset":111,"coordinates":[233.27336522157208,225.6403439189845]}]},"geometry":{"type":"LineString","coordinates":[[1429.6503506326183,220.87390174603217],[233.27336522157208,225.6403439189845]]}},{"type":"Feature","properties":{"id":"Cable-35","text":"Device 1-Cable 1-Section 4-Zone","calibration":[{"offset":36,"coordinates":[238.03980739452447,473.49533691250804]},{"offset":62,"coordinates":[235.65658630804828,273.30476564850824]}]},"geometry":{"type":"LineString","coordinates":[[238.03980739452447,473.49533691250804],[235.65658630804828,273.30476564850824]]}}],"image":"C21119-1FL.1.png","File Name":"abc.json","All Cable Id":"Cable-27,Cable-33,Cable-34,Cable-35","All Zone Id":"Zone-11"}
+        {"type":"FeatureCollection","features":[{"type":"Feature","properties":{"id":"Cable-27","text":"Device 1-Cable 1-Section 1-Zone","calibration":[{"offset":0,"coordinates":[478.7451371286196,478.26177908546015]},{"offset":59,"coordinates":[1103.1490617853808,220.87390174603195]}]},"geometry":{"type":"LineString","coordinates":[[478.7451371286196,478.26177908546015],[1112.6819461312855,480.64500017193643],[1098.3826196124285,242.32289152431758],[1103.1490617853808,220.87390174603195]]}},{"type":"Feature","properties":{"id":"Cable-33","text":"Device 1-Cable 1-Section 2-Zone","calibration":[{"offset":60,"coordinates":[1036.4188713640476,232.7900071784128]},{"offset":76,"coordinates":[669.4028240467146,228.02356500546045]}]},"geometry":{"type":"LineString","coordinates":[[1036.4188713640476,232.7900071784128],[669.4028240467146,228.02356500546045]]}},{"type":"Feature","properties":{"id":"Cable-34","text":"Device 1-Cable 1-Section 3-Zone","calibration":[{"offset":77,"coordinates":[581.2236438470957,225.64034391898429]},{"offset":111,"coordinates":[180.84250131909613,344.80139824279365]}]},"geometry":{"type":"LineString","coordinates":[[581.2236438470957,225.64034391898429],[187.9921645785247,199.4249119677462],[180.84250131909613,344.80139824279365]]}},{"type":"Feature","properties":{"id":"Cable-35","text":"Device 1-Cable 1-Section 4-Zone","calibration":[{"offset":36,"coordinates":[204.67471218385805,390.0825988858412]},{"offset":62,"coordinates":[829.0786368406192,382.9329356264127]}]},"geometry":{"type":"LineString","coordinates":[[204.67471218385805,390.0825988858412],[829.0786368406192,382.9329356264127]]}},{"type":"Feature","properties":{"id":"Zone-11","text":"subzone-2","color":"#000000"},"geometry":{"type":"Polygon","coordinates":[[[1219.926895022714,251.85577587022237],[1381.9859289030946,251.85577587022237],[1381.9859289030946,478.26177908546026],[1219.926895022714,478.26177908546026],[1219.926895022714,251.85577587022237]]]}}],"image":"C21119-1FL.1.png","File Name":"abc.json","All Cable Id":"Cable-27,Cable-33,Cable-34,Cable-35","All Zone Id":"Zone-11"}
     </textarea
       >
       <textarea id="blinkColors" name="blinkColors" hidden>
-        Zone-11/Cable-34/81-ffff00,
+      Zone-11/Cable-34/81-ffff00,
     </textarea
       >
       <!-- Sidebar Holder -->
@@ -256,6 +256,7 @@
                       aria-placeholder="Select Zone"
                     >
                       <option value="0">Select Zone</option>
+
                       <option value="Zone-11">subzone-2</option>
                     </select>
                   </div>
@@ -267,15 +268,19 @@
                   <div class="app-controller-item-layout">
                     <select id="cable_list" class="form-control app-optional">
                       <option value="0#0">Select Cable</option>
+
                       <option value="Cable-27/0-59">
                         Device 1-Cable 1-Section 1-Zone
                       </option>
+
                       <option value="Cable-33/60-76">
                         Device 1-Cable 1-Section 2-Zone
                       </option>
+
                       <option value="Cable-34/77-111">
                         Device 1-Cable 1-Section 3-Zone
                       </option>
+
                       <option value="Cable-35/112-138">
                         Device 1-Cable 1-Section 4-Zone
                       </option>

@@ -679,7 +679,7 @@ function drawCable(currentCable) {
         new ol.style.Style({
           stroke: new ol.style.Stroke({
             color: "#557ef8",
-            width: 6,
+            width: 16,
           }),
           geometry: $("#cspline").prop("#557ef8") ? csp : null,
           text: new ol.style.Text({
@@ -790,10 +790,29 @@ function addModifyAction(features) {
       return false;
     },
     insertVertexCondition: (event) => {
+      console.log(event);
       if (isSelectCalibration) {
-        const coordinates = map.getEventPixel(event.originalEvent);
-        let realCoordinate = event.coordinate;
-        
+          let coordinates = map.getEventPixel(event.originalEvent);
+
+          let realCoordinate = event.coordinate;
+          var closest;
+          var closestLength;
+          for (var ind=0; ind < zoneGeoJson['features'].length; ind++) {
+            if (zoneGeoJson['features'][ind]['properties']['id'].indexOf('Cable') == -1)
+            continue;
+            console.log(ind)
+
+            let lines = new ol.geom.LineString(zoneGeoJson['features'][ind]['geometry']['coordinates']);
+            let tmp   = lines.getClosestPoint([realCoordinate[0], realCoordinate[1]]);    
+            var len = Math.sqrt((tmp[0]-realCoordinate[0]) * (tmp[0]-realCoordinate[0]) + (tmp[1]-realCoordinate[1]) * (tmp[1]-realCoordinate[1]));
+            if (typeof closestLength == 'undefined' || len < closestLength) {
+              closestLength = len;
+              closest = tmp;
+            }
+          }
+          realCoordinate = closest;
+
+
         const layerTitle = map.forEachFeatureAtPixel(
           coordinates,
           (feature, layer) => {
@@ -1204,11 +1223,16 @@ function showCalibrationTooltip(feature) {
       $("#calibrationInfo").val(selectedFeature.getProperties().value);
     } else {
       var i = 0;
-      for(;i<zoneGeoJson['features'].length;i++) {
-        if (zoneGeoJson['features'][i]['properties']['id'] == feature['values_']['layer'])
+      for (; i < zoneGeoJson["features"].length; i++) {
+        if (
+          zoneGeoJson["features"][i]["properties"]["id"] ==
+          feature["values_"]["layer"]
+        )
           break;
       }
-      const line = turf.lineString(zoneGeoJson['features'][i]['geometry']['coordinates']);
+      const line = turf.lineString(
+        zoneGeoJson["features"][i]["geometry"]["coordinates"]
+      );
       const current = selectedFeature.getGeometry().getCoordinates();
       const currentpt = turf.point(current);
       var sliced = turf.lineSplit(line, currentpt)["features"][0];
@@ -1217,7 +1241,9 @@ function showCalibrationTooltip(feature) {
       var $cableElem = $("#cable_list");
       var cableId = $cableElem.val().split("/")[0];
       var cableLength = $cableElem.val().split("/")[1];
-      offset = Math.floor(cableLength * len1 / len0);
+      var offset = cableLength.split("-")[0] * 1;
+      var endpoint = cableLength.split("-")[1] * 1;
+      offset = Math.floor(offset + ((endpoint - offset) * len1) / len0);
       $("#calibrationInfo").val(offset);
     }
   }
@@ -1652,6 +1678,7 @@ $(document).on("click", "#btnSave", null, function (e) {
   }
 
   // * Ajax call to localhost. Address is changeable
+  isZoneCreated = true;
   if (!isZoneCreated) {
     alert("No zone selected!");
     return;
@@ -1662,7 +1689,7 @@ $(document).on("click", "#btnSave", null, function (e) {
     data: JSON.stringify({
       ...zoneGeoJson,
       "File Name": $("#txtfnam").val(),
-      "All Cable Id": `${usedCables}`,
+      "All Cable Id": `${usedCables === "" ? "No selected Zone" : usedCables}`,
       "All Zone Id": `${usedZones}`,
     }),
   })
@@ -1771,7 +1798,7 @@ function init(
             color: f.get("color") || "rgba(255, 255, 255, 0.2)",
           }),
           stroke: new ol.style.Stroke({
-            width: 2,
+            width: 12,
             lineDash: [isDashLine],
             color: f.get("color") || [255, 128, 0],
           }),
