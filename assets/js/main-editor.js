@@ -1,3 +1,4 @@
+var themostcloesetLine
 var urlPath
 var zzz
 
@@ -784,6 +785,7 @@ function addModifyAction(features) {
       return false
     },
     insertVertexCondition: (event) => {
+      var themostcloesetLine = 0
       if (isSelectCalibration) {
         let coordinates = map.getEventPixel(event.originalEvent)
 
@@ -810,6 +812,7 @@ function addModifyAction(features) {
           if (typeof closestLength == "undefined" || len < closestLength) {
             closestLength = len
             closest = tmp
+            themostcloesetLine = ind
           }
         }
         realCoordinate = closest
@@ -836,10 +839,11 @@ function addModifyAction(features) {
             layer.get("title") === layerTitle
           ) {
             const layerSource = layer.getSource()
-
+            console.log("save at", themostcloesetLine)
             const calibrationPoint = new ol.Feature({
               geometry: new ol.geom.Point(realCoordinate),
               text: "calibration",
+              lineIndex: themostcloesetLine,
               layer: layerTitle,
             })
             calibrationPoint.setStyle(
@@ -1137,7 +1141,6 @@ function addTransformNonScaleAction() {
 
 function onCalibrationSave() {
   let offset = $("#calibrationInfo").val() * 1
-
   let maxValue
 
   if (!offset) {
@@ -1222,20 +1225,24 @@ function onCalibrationDelete() {
 function showCalibrationTooltip(feature) {
   map.addOverlay(overlay)
   if (selectedFeature) {
+    console.log(selectedFeature)
     if (selectedFeature.getProperties().value) {
+      console.log("value has", selectedFeature.getProperties().value)
       $("#calibrationInfo").val(selectedFeature.getProperties().value)
     } else {
+      const lineIndex = selectedFeature["values_"]["lineIndex"]
+      console.log("load at", lineIndex)
       const line = turf.lineString(
-        zoneGeoJson["features"][0]["geometry"]["coordinates"]
+        zoneGeoJson["features"][lineIndex]["geometry"]["coordinates"]
       )
       const current = selectedFeature.getGeometry().getCoordinates()
       const currentpt = turf.point(current)
       var sliced = turf.lineSplit(line, currentpt)["features"][0]
       var len0 = turf.length(turf.toWgs84(line))
       var len1 = turf.length(turf.toWgs84(sliced))
-      var $cableElem = $("#cable_list")
-      var cableId = $cableElem.val().split("/")[0]
-      var cableLength = $cableElem.val().split("/")[1]
+      var cableElemVal =
+        document.getElementById("cable_list").options[lineIndex + 1].value
+      var cableLength = cableElemVal.split("/")[1]
       var offset = cableLength.split("-")[0] * 1
       var endpoint = cableLength.split("-")[1] * 1
       offset = Math.floor(offset + ((endpoint - offset) * len1) / len0)
