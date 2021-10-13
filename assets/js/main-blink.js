@@ -1908,16 +1908,11 @@ function getBlinkCoords(sel_cable, startpt, endpt, ratio) {
   if (i == featureList.length) return
   var coordinates = zoneGeoJson.features[i].geometry.coordinates
   const lines = new ol.geom.LineString(coordinates)
-
-  let firstpt = lines.getFirstCoordinate()
-
-  if (startpt == null) {
-    startpt = lines.getFirstCoordinate()
-  } else startpt = startpt["coordinates"]
-  if (endpt == null) endpt = lines.getLastCoordinate()
-  else endpt = endpt["coordinates"]
+  if (startpt) startpt = startpt["coordinates"]
+  else startpt = lines.getFirstCoordinate()
+  if (endpt) endpt = endpt["coordinates"]
+  else endpt = lines.getLastCoordinate()
   var line = turf.lineString(zoneGeoJson.features[i].geometry.coordinates)
-  firstpt = turf.point(firstpt)
   var start = turf.point(startpt)
   var end = turf.point(endpt)
   var sliced1 = turf.lineSplit(line, start)["features"][0]
@@ -1930,6 +1925,9 @@ function getBlinkCoords(sel_cable, startpt, endpt, ratio) {
   }
 
   var sliced2 = turf.lineSplit(line, end)["features"][0]
+  if (turf.length(sliced2) == turf.length(line) && endpt != lines.getLastCoordinate())
+    var sliced2 = turf.lineString([zoneGeoJson.features[i].geometry.coordinates[0], zoneGeoJson.features[i].geometry.coordinates[1]])
+    
   var len2 = turf.length(turf.toWgs84(sliced2))
   return turf.toMercator(
     turf.along(turf.toWgs84(line), len1 + (len2 - len1) * ratio)

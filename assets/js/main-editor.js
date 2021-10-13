@@ -1779,8 +1779,18 @@ function updateGeoJson() {
   zoneGeoJson = tempZoneGeoJson
 }
 function saveFunc(e) {
+  // zoneGeoJson.features.map(function(value) {
+
+  // })
+  console.log(zoneGeoJson)
+  if ( ! zoneGeoJson.features.filter(function(value) {
+    return value.geometry.type == "LineString";
+  }).length) {
+    alert('No assigned cables'); return;
+  }
   updateGeoJson()
   let usedCables = ""
+
   addedCable.map((cableId, index) => {
     if (index === addedCable.length - 1) {
       usedCables += cableId
@@ -1818,8 +1828,20 @@ function saveFunc(e) {
     return
   }
 
-  console.log(JSON.stringify(zoneGeoJson))
-
+  if (zoneGeoJson.features.filter(function(value) {
+    if (value.geometry.type == "LineString" && typeof value.properties.id == 'undefined')
+      return true;
+    else
+      return false;
+  }).length) {
+    alert('Not assigned cables are there. Please assign them.'); return;
+  }
+console.log({
+  ...zoneGeoJson,
+  "File Name": $("#txtfnam").val(),
+  "All Cable Id": `${usedCables === "" ? "No selected Zone" : usedCables}`,
+  "All Zone Id": `${usedZones}`,
+})
   $.post("http://10.10.10.11", {
     data: JSON.stringify({
       ...zoneGeoJson,
